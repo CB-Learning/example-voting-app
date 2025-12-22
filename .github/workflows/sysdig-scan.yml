@@ -25,10 +25,9 @@ jobs:
       - name: Install Sysdig CLI Scanner
         run: |
           set -euo pipefail
-          curl -fL https://download.sysdig.com/scanning/sysdig-cli-scanner/latest/linux/amd64/sysdig-cli-scanner -o sysdig-cli-scanner
-          file sysdig-cli-scanner
-          chmod +x sysdig-cli-scanner
-          ./sysdig-cli-scanner --version
+          curl -fsSL https://download.sysdig.com/scanning/install-cli-scanner | bash
+          command -v sysdig-cli-scanner
+          sysdig-cli-scanner --version
 
       - name: Scan images (requires token)
         env:
