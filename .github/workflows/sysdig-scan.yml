@@ -51,18 +51,24 @@ jobs:
 
       - name: Scan images (requires token)
         env:
-          SYSDIG_SECURE_API_TOKEN: ${{ secrets.SYSDIG_SECURE_API_TOKEN }}
-          SYSDIG_ENDPOINT: ${{ secrets.SYSDIG_ENDPOINT }}
+          SECURE_API_TOKEN: ${{ secrets.SYSDIG_SECURE_API_TOKEN }}
+          SYSDIG_API_URL: ${{ secrets.SYSDIG_ENDPOINT }}
         run: |
-          if [ -z "${SYSDIG_SECURE_API_TOKEN}" ]; then
-            echo "ERROR: Missing SYSDIG_SECURE_API_TOKEN GitHub secret"
+          set -euo pipefail
+
+          if [ -z "${SECURE_API_TOKEN:-}" ]; then
+            echo "ERROR: Missing SYSDIG_SECURE_API_TOKEN GitHub secret (mapped to SECURE_API_TOKEN)"
             exit 1
           fi
-          if [ -z "${SYSDIG_ENDPOINT}" ]; then
-            echo "ERROR: Missing SYSDIG_ENDPOINT GitHub secret (e.g., https://<region>.app.sysdig.com)"
+          if [ -z "${SYSDIG_API_URL:-}" ]; then
+            echo "ERROR: Missing SYSDIG_ENDPOINT GitHub secret (mapped to SYSDIG_API_URL)"
             exit 1
           fi
 
-          ./sysdig-cli-scanner --apiurl "${SYSDIG_ENDPOINT}" --token "${SYSDIG_SECURE_API_TOKEN}" docker://vote:${{ github.sha }}
-          ./sysdig-cli-scanner --apiurl "${SYSDIG_ENDPOINT}" --token "${SYSDIG_SECURE_API_TOKEN}" docker://worker:${{ github.sha }}
-          ./sysdig-cli-scanner --apiurl "${SYSDIG_ENDPOINT}" --token "${SYSDIG_SECURE_API_TOKEN}" docker://result:${{ github.sha }}
+          ./sysdig-cli-scanner --apiurl "${SYSDIG_API_URL}" docker://vote:${{ github.sha }}
+          ./sysdig-cli-scanner --apiurl "${SYSDIG_API_URL}" docker://worker:${{ github.sha }}
+          ./sysdig-cli-scanner --apiurl "${SYSDIG_API_URL}" docker://result:${{ github.sha }}
+
+
+    
+    
