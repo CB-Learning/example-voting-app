@@ -22,12 +22,32 @@ jobs:
           docker build -t worker:${{ github.sha }} ./worker
           docker build -t result:${{ github.sha }} ./result
 
-      - name: Install Sysdig CLI Scanner
+      - name: Install Sysdig CLI Scanner (official path + checksum)
         run: |
           set -euo pipefail
-          curl -fsSL https://download.sysdig.com/scanning/install-cli-scanner | bash
-          command -v sysdig-cli-scanner
-          sysdig-cli-scanner --version
+
+          VERSION="$(curl -fsSL https://download.sysdig.com/scanning/sysdig-cli-scanner/latest_version.txt | tr -d '\n')"
+          echo "Sysdig scanner version: ${VERSION}"
+
+          BIN_URL="https://download.sysdig.com/scanning/bin/sysdig-cli-scanner/${VERSION}/linux/amd64/sysdig-cli-scanner"
+          SHA_URL="https://download.sysdig.com/scanning/bin/sysdig-cli-scanner/${VERSION}/linux/amd64/sysdig-cli-scanner.sha256"
+
+          echo "BIN_URL=${BIN_URL}"
+          echo "SHA_URL=${SHA_URL}"
+
+          curl -fsSL "$BIN_URL" -o sysdig-cli-scanner
+          curl -fsSL "$SHA_URL" -o sysdig-cli-scanner.sha256
+
+          # Verify checksum (runner is Ubuntu -> sha256sum exists)
+          sha256sum -c sysdig-cli-scanner.sha256
+
+          chmod +x ./sysdig-cli-scanner
+          ls -lh sysdig-cli-scanner
+          ./sysdig-cli-scanner --version
+     
+          
+          
+          
 
       - name: Scan images (requires token)
         env:
