@@ -42,6 +42,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          echo "Token length: ${#SECURE_API_TOKEN}"
           ./bin/sysdig-cli-scanner --iac \
             --apiurl="${SYSDIG_API_URL}" \
             -r \
