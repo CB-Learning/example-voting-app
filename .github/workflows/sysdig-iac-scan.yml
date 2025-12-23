@@ -1,0 +1,43 @@
+name: Sysdig IaC Scan
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  iac_scan:
+    runs-on: ubuntu-latest
+
+    env:
+      SECURE_API_TOKEN: ${{ secrets.SECURE_API_TOKEN }}
+      SYSDIG_API_URL: ${{ secrets.SYSDIG_API_URL }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install sysdig-cli-scanner
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ./bin
+          # IMPORTANT: replace this with the Sysdig-provided download URL for your tenant/version.
+          # curl -sSL "<SCANNER_DOWNLOAD_URL>" -o ./bin/sysdig-cli-scanner
+          # chmod +x ./bin/sysdig-cli-scanner
+
+          # Temporary safety check: fail loudly until you set the download URL
+          echo "You must set the Sysdig CLI Scanner download URL in this step."
+          exit 3
+
+      - name: Sysdig IaC Scan
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./bin/sysdig-cli-scanner --iac \
+            --apiurl="${SYSDIG_API_URL}" \
+            -r \
+            -f high \
+            .
