@@ -12,9 +12,9 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      SECURE_API_TOKEN: ${{ secrets.SECURE_API_TOKEN }}
+      SECURE_API_TOKEN: ${{ secrets.SYSDIG_SECURE_API_TOKEN }}
       SYSDIG_API_URL: ${{ secrets.SYSDIG_API_URL }}
-
+  
     steps:
       - name: Checkout
         uses: actions/checkout@v4
