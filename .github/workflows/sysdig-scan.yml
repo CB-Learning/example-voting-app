@@ -65,9 +65,14 @@ jobs:
             exit 1
           fi
 
-          ./sysdig-cli-scanner --apiurl "${SYSDIG_API_URL}" docker://vote:${{ github.sha }}
-          ./sysdig-cli-scanner --apiurl "${SYSDIG_API_URL}" docker://worker:${{ github.sha }}
-          ./sysdig-cli-scanner --apiurl "${SYSDIG_API_URL}" docker://result:${{ github.sha }}
+          fail=0
+
+          ./sysdig-cli-scanner --apiurl "${SYSDIG_API_URL}" docker://vote:${{ github.sha }}   || fail=1
+          ./sysdig-cli-scanner --apiurl "${SYSDIG_API_URL}" docker://worker:${{ github.sha }} || fail=1
+          ./sysdig-cli-scanner --apiurl "${SYSDIG_API_URL}" docker://result:${{ github.sha }} || fail=1
+
+          exit $fail
+
 
 
     
