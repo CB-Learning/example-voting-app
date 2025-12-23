@@ -31,7 +31,9 @@ jobs:
 
           curl -fsSL "$BIN_URL" -o ./bin/sysdig-cli-scanner
           curl -fsSL "$SHA_URL" -o ./bin/sysdig-cli-scanner.sha256
-          sha256sum -c ./bin/sysdig-cli-scanner.sha256
+
+          (cd ./bin && sha256sum -c sysdig-cli-scanner.sha256)
+
           chmod +x ./bin/sysdig-cli-scanner
           ./bin/sysdig-cli-scanner --version
 
