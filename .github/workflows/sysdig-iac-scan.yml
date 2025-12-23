@@ -24,13 +24,17 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p ./bin
-          # IMPORTANT: replace this with the Sysdig-provided download URL for your tenant/version.
-          # curl -sSL "<SCANNER_DOWNLOAD_URL>" -o ./bin/sysdig-cli-scanner
-          # chmod +x ./bin/sysdig-cli-scanner
 
-          # Temporary safety check: fail loudly until you set the download URL
-          echo "You must set the Sysdig CLI Scanner download URL in this step."
-          exit 3
+          VERSION="$(curl -fsSL https://download.sysdig.com/scanning/sysdig-cli-scanner/latest_version.txt | tr -d '\n')"
+          BIN_URL="https://download.sysdig.com/scanning/bin/sysdig-cli-scanner/${VERSION}/linux/amd64/sysdig-cli-scanner"
+          SHA_URL="https://download.sysdig.com/scanning/bin/sysdig-cli-scanner/${VERSION}/linux/amd64/sysdig-cli-scanner.sha256"
+
+          curl -fsSL "$BIN_URL" -o ./bin/sysdig-cli-scanner
+          curl -fsSL "$SHA_URL" -o ./bin/sysdig-cli-scanner.sha256
+          sha256sum -c ./bin/sysdig-cli-scanner.sha256
+          chmod +x ./bin/sysdig-cli-scanner
+          ./bin/sysdig-cli-scanner --version
+
 
       - name: Sysdig IaC Scan
         shell: bash
